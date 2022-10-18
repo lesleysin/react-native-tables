@@ -1,0 +1,1 @@
+export { default as TableStatic } from "./TableStatic";

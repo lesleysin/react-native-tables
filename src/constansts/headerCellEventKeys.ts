@@ -1,0 +1,1 @@
+export type HeaderCellEventKey = "press" | "sort" | "changeWidth"

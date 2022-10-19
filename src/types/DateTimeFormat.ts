@@ -15,14 +15,14 @@
 enum DateTimeFormatList {
     ShortDate = "MM/DD/YYYY",
     CondensedDate = "MMM. DD, YYYY",
-    MonthDay = 'MMMM, DD',
-    YearMonth = 'MMMM, YYYY',
-    ShortDateShortTime = 'M/DD/YYYY hh:mm A ',
-    ShortDateLongTime = 'M/DD/YYYY hh:mm:ss A',
-    CondensedDateTime = 'MMM. DD, YYYY hh:mm A',
+    MonthDay = "MMMM, DD",
+    YearMonth = "MMMM, YYYY",
+    ShortDateShortTime = "M/DD/YYYY hh:mm A ",
+    ShortDateLongTime = "M/DD/YYYY hh:mm:ss A",
+    CondensedDateTime = "MMM. DD, YYYY hh:mm A",
     ShortTime = "hh:mm A",
-    LongTime = 'hh:mm:ss A',
-    DateTimeISO = 'DateTimeISO',
+    LongTime = "hh:mm:ss A",
+    DateTimeISO = "DateTimeISO",
 }
 
 export type DateTimeFormat = `${DateTimeFormatList}`;

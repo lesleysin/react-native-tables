@@ -39,6 +39,19 @@ describe("Date and time formatting tests", () => {
 			const formatedDate = DateTimeFormatter.formatDate(dateStr, DateTimeFormatList.YearMonth).toString();
 			expect(formatedDate).toBe("December, 2022");
 		});
+
+		test("With global date pattern, with locale", () => {
+			TableStatic.customFormattingPattern = "hh";
+			const formatedDate = DateTimeFormatter.formatDate(dateStr, undefined, "ru").toString();
+			expect(formatedDate).toBe("03");
+		});
+
+		test("With global date pattern, withot locale", () => {
+			TableStatic.customFormattingPattern = "hh";
+			const formatedDate = DateTimeFormatter.formatDate(dateStr).toString();
+			expect(formatedDate).toBe("03");
+		});
+
 	});
 	
 

@@ -14,10 +14,10 @@ interface ICellProps {
   parentIndex: number;
   ownIndex: number;
   matrix: any[][];
-  props?: CellViewProps & ViewStyle;
+  cellProps?: CellViewProps & ViewStyle;
 }
 
-const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, props }) => {
+const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps }) => {
 	const [cellValue, setCellValue] = useState<any>();
 	const [pressed, setPressed] = useState(false);
 	const { onCellPress, onRowPress } = useContext(EventHandleContext);
@@ -107,12 +107,12 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, props }) 
 			return pressed ? TableStatic.cellContainerStyle.cellHighligntBackgroundColor : undefined;
 		}
 
-		if (props?.cellHighligntBackgroundColor) {
-			return pressed ? props.cellHighligntBackgroundColor : undefined;
+		if (cellProps?.cellHighligntBackgroundColor) {
+			return pressed ? cellProps.cellHighligntBackgroundColor : undefined;
 		}
 
 		return pressed ? "#DCDCDC" : undefined;
-	}, [props, pressed]);
+	}, [cellProps, pressed]);
 
 	return (
 		<Pressable

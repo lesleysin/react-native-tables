@@ -20,7 +20,14 @@ interface ICellProps {
 const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps }) => {
 	const [cellValue, setCellValue] = useState<any>();
 	const [pressed, setPressed] = useState(false);
-	const { onCellPress, onRowPress } = useContext(EventHandleContext);
+	const {
+		onCellPress,
+		onRowPress,
+		numericCellTextStyle,
+		stringCellTextStyle,
+		linkCellTextStyle,
+		dateCellTextStyle,
+	} = useContext(EventHandleContext);
 
 	const onRowPressInListener = useCallback((val: boolean) => {
 		setPressed(val);
@@ -76,28 +83,45 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 		switch (config.type) {
 		case "string": {
 			return (
-				<Text style={[styles.def, TableStatic.stringCellTextStyle]} numberOfLines={1}>
+				<Text
+					style={[styles.def, { ...stringCellTextStyle, ...TableStatic.stringCellTextStyle }]}
+					numberOfLines={1}
+				>
 					{cellValue}
 				</Text>
 			);
 		}
 		case "number": {
 			return (
-				<Text style={[styles.def, TableStatic.numericCellTextStyle]} numberOfLines={1}>
+				<Text
+					style={[styles.def, { ...numericCellTextStyle, ...TableStatic.numericCellTextStyle }]}
+					numberOfLines={1}
+				>
 					{cellValue}
 				</Text>
 			);
 		}
 		case "date": {
-			const parsedDate = DateTimeFormatter.formatDate(cellValue, config.format, config.locale);
+			const parsedDate = DateTimeFormatter.formatDate(
+				cellValue,
+				TableStatic.format ?? config.format,
+				TableStatic.locale ?? config.locale
+			);
 			return (
-				<Text style={[styles.def, TableStatic.dateCellTextStyle]} numberOfLines={1}>
+				<Text
+					style={[styles.def, { ...dateCellTextStyle, ...TableStatic.dateCellTextStyle }]}
+					numberOfLines={1}
+				>
 					{parsedDate.toString()}
 				</Text>
 			);
 		}
 		case "link": {
-			return <Text>{cellValue}</Text>;
+			return (
+				<Text style={[styles.def, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}>
+					{cellValue}
+				</Text>
+			);
 		}
 		}
 	}, [cellValue]);

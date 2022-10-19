@@ -12,7 +12,24 @@ import type ColumnOptions from "../../types/CellOptions";
 import type { CompareEntryPoint } from "../../types/CompareEntry";
 import type ITableProps from "../../types/ITableProps";
 
-const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, onRowPress, enableHorizontalScroll = false }) => {
+const Table: FC<ITableProps> = ({
+	config,
+	data,
+	estimatedRowCount,
+	onCellPress,
+	onRowPress,
+	numericCellTextStyle,
+	stringCellTextStyle,
+	linkCellTextStyle,
+	dateCellTextStyle,
+	headerCellTextStyle,
+	cellContainerStyle,
+	headerCellContainerStyle,
+	columnContainerStyle,
+	horizontalScrollViewProps,
+	verticalScrollViewProps,
+	enableHorizontalScroll = false,
+}) => {
 	const [matrix, setMatrix] = useState<any[][]>([]);
 
 	useLayoutEffect(() => {
@@ -32,11 +49,11 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 	}, [data]);
 
 	/**
-     * 
-     * @param mainLenght - count of columns (from configuration)
-     * @param rowCount - computed value of row based on data array lenght (if defined) or estimated rows count
-     * @returns new matrix
-     */
+   *
+   * @param mainLenght - count of columns (from configuration)
+   * @param rowCount - computed value of row based on data array lenght (if defined) or estimated rows count
+   * @returns new matrix
+   */
 	function createMatrix(mainLenght: number, rowCount: number) {
 		const arr: any[] = [];
 		for (let i = 0; i < mainLenght; i++) {
@@ -44,16 +61,15 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 			for (let j = 0; j < rowCount; j++) {
 				arr[i][j] = null;
 			}
-
 		}
 		return arr;
 	}
 
 	/**
-     * @param current - current table data
-     * @param other - new table data
-     * @returns array of compare results as object with coordinates of changed prop in current matrix;
-     */
+   * @param current - current table data
+   * @param other - new table data
+   * @returns array of compare results as object with coordinates of changed prop in current matrix;
+   */
 	function compareMatrix(current: TableData, other: TableData) {
 		const needUpdateList: CompareEntryPoint[] = [];
 		for (let xIndex = 0; xIndex < current.length; xIndex++) {
@@ -70,10 +86,9 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 					} else {
 						needUpdateList.push({
 							xIndex,
-							yIndex
+							yIndex,
 						});
 					}
-
 				}
 			}
 		}
@@ -81,9 +96,9 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 	}
 
 	/**
-     * 
-     * @param data - matrix with table data
-     */
+   *
+   * @param data - matrix with table data
+   */
 	function updateMatrix(data: TableData) {
 		const editableData = [...matrix];
 		for (let xIndex = 0; xIndex < editableData.length; xIndex++) {
@@ -100,9 +115,9 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 	}
 
 	/**
-     * try get row count from context
-     * @returns rows number or 0
-     */
+   * try get row count from context
+   * @returns rows number or 0
+   */
 	function getEstimatedSize() {
 		if (data.length > 0) {
 			return data.length;
@@ -116,30 +131,45 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 	}
 
 	/**
-     * Render function for create columnt view
-     */
-	const renderHeaderCell = useCallback((configItem: ColumnOptions, index: number) => {
-		const lastIndex = config.length - 1;
-		const itemId = configItem.id ? configItem.id : ColumnConfiguration.generateUId();
-		configItem.id = itemId;
-		return <Column matrix={matrix} key={`col:${itemId}`} config={configItem} index={index} lastIndex={lastIndex} />;
-	}, [matrix]);
+   * Render function for create columnt view
+   */
+	const renderHeaderCell = useCallback(
+		(configItem: ColumnOptions, index: number) => {
+			const lastIndex = config.length - 1;
+			const itemId = configItem.id ? configItem.id : ColumnConfiguration.generateUId();
+			configItem.id = itemId;
+			return (
+				<Column
+					matrix={matrix}
+					key={`col:${itemId}`}
+					config={configItem}
+					index={index}
+					lastIndex={lastIndex}
+				/>
+			);
+		},
+		[matrix]
+	);
 
 	/**
-     * Memoised configuration mapping result
-     */
+   * Memoised configuration mapping result
+   */
 	const tableColumns = useMemo(() => {
 		return config.map(renderHeaderCell);
 	}, [config, matrix]);
 
 	/**
-     * Memoised wrapper for all columns
-     */
+   * Memoised wrapper for all columns
+   */
 	const tableView = useMemo(() => {
 		if (data.length > 0 && enableHorizontalScroll) {
 			return (
-				<ScrollView {...TableStatic.verticalScrollViewProps} >
-					<ScrollView horizontal {...TableStatic.horizontalScrollViewProps}>
+				<ScrollView {...verticalScrollViewProps} {...TableStatic.verticalScrollViewProps}>
+					<ScrollView
+						{...horizontalScrollViewProps}
+						{...TableStatic.horizontalScrollViewProps}
+						horizontal
+					>
 						{tableColumns}
 					</ScrollView>
 				</ScrollView>
@@ -147,7 +177,11 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 		}
 
 		return (
-			<ScrollView {...TableStatic.verticalScrollViewProps} contentContainerStyle={{ flexDirection: "row", backgroundColor: "white" }} >
+			<ScrollView
+				contentContainerStyle={{ flexDirection: "row", backgroundColor: "white" }}
+				{...verticalScrollViewProps}
+				{...TableStatic.verticalScrollViewProps}
+			>
 				{tableColumns}
 			</ScrollView>
 		);
@@ -155,10 +189,22 @@ const Table: FC<ITableProps> = ({ config, data, estimatedRowCount, onCellPress, 
 
 	return (
 		<View>
-			<EventHandleContext.Provider value={{
-				onCellPress,
-				onRowPress
-			}} >
+			<EventHandleContext.Provider
+				value={{
+					onCellPress,
+					onRowPress,
+					numericCellTextStyle,
+					stringCellTextStyle,
+					linkCellTextStyle,
+					dateCellTextStyle,
+					headerCellTextStyle,
+					cellContainerStyle,
+					headerCellContainerStyle,
+					columnContainerStyle,
+					horizontalScrollViewProps,
+					verticalScrollViewProps,
+				}}
+			>
 				{tableView}
 			</EventHandleContext.Provider>
 		</View>

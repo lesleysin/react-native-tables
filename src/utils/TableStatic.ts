@@ -6,15 +6,27 @@ export interface CellViewProps {
   longPressDelay?: number;
 }
 
-interface HeaderCellProps {
+export interface HeaderCellProps {
   firstCellStyle?: ViewStyle;
   lastCellStyle?: ViewStyle;
   defaultCellStyle?: ViewStyle;
 }
 
-class TableStatic {
+export interface ITableStaticProps {
+    numericCellTextStyle?: TextStyle;
+    stringCellTextStyle?: TextStyle;
+    linkCellTextStyle?: TextStyle;
+    dateCellTextStyle?: TextStyle;
+    headerCellTextStyle?: TextStyle;
+    cellContainerStyle?: ViewStyle & CellViewProps;
+    headerCellContainerStyle?: HeaderCellProps;
+    columnContainerStyle?: ViewStyle;
+    horizontalScrollViewProps?: ScrollViewProps;
+    verticalScrollViewProps?: ScrollViewProps;
+}
+
+class TableStatic implements ITableStaticProps {
 	//text
-	// static textStyle: TextStyle = {};
 	static numericCellTextStyle: TextStyle = {};
 	static stringCellTextStyle: TextStyle = {};
 	static linkCellTextStyle: TextStyle = {};
@@ -25,8 +37,6 @@ class TableStatic {
 	static cellContainerStyle: ViewStyle & CellViewProps = {};
 	static headerCellContainerStyle: HeaderCellProps = {};
 	static columnContainerStyle: ViewStyle = {};
-	static verticalScrollViewContentContainerStyle: ViewStyle = {};
-	static horizontalScrollViewContentContainerStyle: ViewStyle = {};
 
 	//scrollview handlers and behavior
 	static horizontalScrollViewProps: ScrollViewProps = {};
@@ -38,6 +48,9 @@ class TableStatic {
 	static locale?: AvailableLocales;
 	static customFormattingPattern?: string;
 
+	/**
+	 * @internal
+	 */
 	static clear() {
 		TableStatic.numericCellTextStyle = {};
 		TableStatic.stringCellTextStyle = {};
@@ -46,14 +59,22 @@ class TableStatic {
 		TableStatic.headerCellTextStyle = {};
 		TableStatic.cellContainerStyle = {};
 		TableStatic.columnContainerStyle = {};
-		TableStatic.verticalScrollViewContentContainerStyle = {};
-		TableStatic.horizontalScrollViewContentContainerStyle = {};
 		TableStatic.horizontalScrollViewProps = {};
 		TableStatic.verticalScrollViewProps = {};
 		TableStatic.enableHorizontalScroll = false;
 		TableStatic.format = undefined;
 		TableStatic.locale = undefined;
 		TableStatic.customFormattingPattern = undefined;
+	}
+
+	static create(args: ITableStaticProps) {
+		for (const key in args) {
+			if (Object.prototype.hasOwnProperty.call(args, key)) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				//@ts-ignore
+				TableStatic[key] = args[key as keyof typeof args];
+			}
+		}
 	}
 }
 

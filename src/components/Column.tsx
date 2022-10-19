@@ -1,10 +1,12 @@
-import React, { FC, useCallback, useMemo } from "react";
-import { View } from "react-native";
+import React, { FC, useCallback, useContext, useMemo } from "react";
+import { StyleSheet, View } from "react-native";
 
 import Cell from "./Cell";
 import HeaderCell from "./HeaderCell";
 
 import type ColumnOptions from "../types/CellOptions";
+import EventHandleContext from "./EventHandleContext";
+import { TableStatic } from "../utils";
 
 interface IColumnProps {
   matrix: any[][];
@@ -14,6 +16,7 @@ interface IColumnProps {
 }
 
 const Column: FC<IColumnProps> = ({ matrix, index, lastIndex, config }) => {
+	const { columnContainerStyle } = useContext(EventHandleContext);
 	//FIXME - handle pan gesture events for change column width
 
 	//NOTE - incorrect work with horizontal scroll
@@ -90,11 +93,17 @@ const Column: FC<IColumnProps> = ({ matrix, index, lastIndex, config }) => {
 	}, [matrix]);
 
 	return (
-		<View style={{ flex: 1 }}>
+		<View style={[styles.fl, { ...columnContainerStyle, ...TableStatic.columnContainerStyle }]}>
 			{columnHeader}
 			{columnDataCells}
 		</View>
 	);
 };
+
+const styles = StyleSheet.create({
+	fl: {
+		flex: 1,
+	},
+});
 
 export default Column;

@@ -12,14 +12,27 @@
     "type": "git",
     "url": "https://github.com/lesleysin/react-native-tables.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react-native",
+    "ios", 
+    "android",
+    "table",
+    "dataset"
+  ],
   "author": "lesleysin",
-  "license": "ISC",
+  "license": "MIT",
   "react-native": "src/index.ts",
   "module": "dist/module/index.js",
   "types": "dist/typescript/index.d.ts",
   "modulePaths": [
     "./src"
   ],
+  "bugs": {
+    "url": "https://github.com/lesleysin/react-native-tables/issues"
+  },
   "files": [
     "src",
     "dist",

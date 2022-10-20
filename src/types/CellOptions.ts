@@ -10,7 +10,7 @@ export class ColumnConfiguration {
 
 	constructor(title: string, id?: string, isSortable = false) {
 		this.title = title;
-		this.id = id;
+		this.id = id ?? ColumnConfiguration.generateUId();
 		this.isSortable = isSortable;
 	}
 
@@ -26,22 +26,44 @@ export class ColumnConfiguration {
 
 }
 
-class StringCellOptions extends ColumnConfiguration {
+export class StringCellOptions extends ColumnConfiguration {
 	type = "string" as const; 
+
+	constructor(type: "string", title: string, id?: string, isSortable?: boolean) {
+		super(title, id, isSortable);
+		this.type = type;
+	}
 }
 
-class NumberCellOptions extends ColumnConfiguration {
+export class NumberCellOptions extends ColumnConfiguration {
 	type = "number" as const;
+
+	constructor(type: "number", title: string, id?: string, isSortable?: boolean) {
+		super(title, id, isSortable);
+		this.type = type;
+	}
 }
 
-class DateTimeCellOptions extends ColumnConfiguration {
+export class DateTimeCellOptions extends ColumnConfiguration {
 	type = "date" as const;
 	format: DateTimeFormat = "DateTimeISO";
 	locale?: AvailableLocales;
+
+	constructor(type: "date", title: string, format: DateTimeFormat, locale?: AvailableLocales, id?: string, isSortable?: boolean) {
+		super(title, id, isSortable);
+		this.type = type;
+		this.format = format;
+		this.locale = locale;
+	}
 }
 
-class LinkCellOptions extends ColumnConfiguration {
+export class LinkCellOptions extends ColumnConfiguration {
 	type= "link" as const;
+
+	constructor(type: "link", title: string, id?: string, isSortable?: boolean) {
+		super(title, id, isSortable);
+		this.type = type;
+	}
 }
 
 export default ColumnOptions;

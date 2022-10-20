@@ -16,7 +16,7 @@ describe("Date and time formatting tests", () => {
 	});
 
 
-	describe("Locale tests", () => {
+	describe("Global settings testing", () => {
 
 		test("Global locale settings", () => {
 			TableStatic.locale = "ru";
@@ -24,13 +24,13 @@ describe("Date and time formatting tests", () => {
 			expect(formatedDate).toBe("декабрь, 2022");
 		});
 
-		test("Global locale settings, ignore local configured locale", () => {
+		test("Global locale settings, ignore local configured locale value", () => {
 			TableStatic.locale = "ru";
 			const formatedDate = DateTimeFormatter.formatDate(dateStr, DateTimeFormatList.YearMonth, "de").toString();
 			expect(formatedDate).toBe("декабрь, 2022");
 		});
 
-		test("Local configured locale", () => {
+		test("Local configured locale value", () => {
 			const formatedDate = DateTimeFormatter.formatDate(dateStr, DateTimeFormatList.YearMonth, "de").toString();
 			expect(formatedDate).toBe("Dezember, 2022");
 		});

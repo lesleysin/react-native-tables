@@ -12,4 +12,8 @@ import type { TableData } from "./TableData";
     onRowPress?: (event: GestureResponderEvent, rowValues: any[]) => void;
 }
 
+export interface TableRef {
+    clearTable: () => void;
+}
+
 export default ITableProps;

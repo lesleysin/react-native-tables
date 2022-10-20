@@ -14,6 +14,6 @@ export class ComplexValue {
 	}
 }
 
-type TableValues = Nullable<PrimitiveValue> | ComplexValue;
+export type TableValues = Nullable<PrimitiveValue> | ComplexValue;
 
 export type TableData = Nullable<TableValues[]>[];

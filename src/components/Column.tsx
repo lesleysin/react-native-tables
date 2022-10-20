@@ -5,18 +5,17 @@ import Cell from "./Cell";
 import HeaderCell from "./HeaderCell";
 
 import type ColumnOptions from "../types/CellOptions";
-import EventHandleContext from "./EventHandleContext";
+import TableViewContext from "./TableViewContext";
 import { TableStatic } from "../utils";
 
 interface IColumnProps {
-  matrix: any[][];
   index: number;
   lastIndex: number;
   config: ColumnOptions;
 }
 
-const Column: FC<IColumnProps> = ({ matrix, index, lastIndex, config }) => {
-	const { columnContainerStyle } = useContext(EventHandleContext);
+const Column: FC<IColumnProps> = ({ index, lastIndex, config }) => {
+	const { columnContainerStyle, matrix } = useContext(TableViewContext);
 	//FIXME - handle pan gesture events for change column width
 
 	//NOTE - incorrect work with horizontal scroll
@@ -65,7 +64,6 @@ const Column: FC<IColumnProps> = ({ matrix, index, lastIndex, config }) => {
 				config={config}
 				index={index}
 				lastIndex={lastIndex}
-				matrix={matrix}
 			/>
 		);
 	}, [config, index, lastIndex]);
@@ -74,7 +72,6 @@ const Column: FC<IColumnProps> = ({ matrix, index, lastIndex, config }) => {
 		(_: any, own: number) => {
 			return (
 				<Cell
-					matrix={matrix}
 					key={`cell${index}${own}${config.id}`}
 					config={config}
 					parentIndex={index}

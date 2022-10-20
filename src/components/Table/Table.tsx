@@ -1,11 +1,9 @@
 import React, {
-	FC,
 	forwardRef,
 	ForwardRefRenderFunction,
 	useCallback,
 	useEffect,
 	useImperativeHandle,
-	useLayoutEffect,
 	useMemo,
 	useState,
 } from "react";
@@ -13,18 +11,13 @@ import { ScrollView, View } from "react-native";
 
 import { ColumnConfiguration } from "../../types/CellOptions";
 import Column from "../Column";
-import EventHandleContext from "../EventHandleContext";
-import broadcaster from "../../utils/Broadcaster";
+import TableViewContext from "../TableViewContext";
 import { TableStatic } from "../../utils";
 
 import type { TableData } from "../../types/TableData";
 import type ColumnOptions from "../../types/CellOptions";
-import type { CompareEntryPoint } from "../../types/CompareEntry";
 import type ITableProps from "../../types/ITableProps";
-
-export interface TableRef {
-  clearTable: () => void;
-}
+import type { TableRef } from "../../types/ITableProps";
 
 const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 	{
@@ -53,37 +46,25 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 		clearTable,
 	}));
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const size = getEstimatedSize();
 		const newMatrix = createMatrix(config.length, size);
-		setMatrix(newMatrix);
-	}, []);
-
-	useEffect(() => {
-		if (data && data.length > 0) {
-			const compareResult = compareMatrix(matrix, data);
-			updateMatrix(data);
-			compareResult.forEach(({ xIndex, yIndex }) => {
-				broadcaster.emit(`cell:update:force${xIndex}${yIndex}`);
-			});
-		}
+		const updatedMatrix = updateMatrix(newMatrix, data);
+		setMatrix(updatedMatrix);
 	}, [data]);
 
 	function clearTable() {
-		const editableData = [...matrix];
-		for (let xIndex = 0; xIndex < editableData.length; xIndex++) {
+		const newMatrix = [...matrix];
+		for (let xIndex = 0; xIndex < newMatrix.length; xIndex++) {
 			const yElement = data[xIndex];
 
 			if (yElement === null || yElement === undefined) continue;
 
 			for (let yIndex = 0; yIndex < yElement.length; yIndex++) {
-				editableData[xIndex][yIndex] = null;
+				newMatrix[xIndex][yIndex] = null;
 			}
 		}
-		const compareRes = compareMatrix(matrix, editableData);
-		compareRes.forEach(({ xIndex, yIndex }) => {
-			broadcaster.emit(`cell:update:force${xIndex}${yIndex}`);
-		});
+		setMatrix(newMatrix);
 	}
 
 	/**
@@ -104,52 +85,24 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 	}
 
 	/**
-   * @param current - current table data
-   * @param other - new table data
-   * @returns array of compare results as object with coordinates of changed prop in current matrix;
-   */
-	function compareMatrix(current: TableData, other: TableData) {
-		const needUpdateList: CompareEntryPoint[] = [];
-		for (let xIndex = 0; xIndex < current.length; xIndex++) {
-			const itemA = current[xIndex];
-			const itemB = other[xIndex];
-
-			if (itemA && itemB) {
-				for (let yIndex = 0; yIndex < itemA.length; yIndex++) {
-					const itemAa = itemA[yIndex];
-					const itemBb = itemB[yIndex];
-
-					if (itemAa === itemBb || itemB === null) {
-						continue;
-					} else {
-						needUpdateList.push({
-							xIndex,
-							yIndex,
-						});
-					}
-				}
-			}
-		}
-		return needUpdateList;
-	}
-
-	/**
    *
    * @param data - matrix with table data
    */
-	function updateMatrix(data: TableData) {
-		const editableData = [...matrix];
-		for (let xIndex = 0; xIndex < editableData.length; xIndex++) {
+	function updateMatrix(target: any[][], data: TableData) {
+		const editableData = [...target];
+		for (let xIndex = 0; xIndex < data.length; xIndex++) {
 			const yElement = data[xIndex];
 
-			if (yElement === null || yElement === undefined) continue;
+			if (yElement === null || yElement === undefined) {
+				continue;
+			}
 
 			for (let yIndex = 0; yIndex < yElement.length; yIndex++) {
 				const value = yElement[yIndex];
-				editableData[xIndex][yIndex] = value;
+				editableData[xIndex][yIndex] = value ?? null;
 			}
 		}
-		setMatrix(editableData);
+		return editableData;
 	}
 
 	/**
@@ -157,7 +110,7 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
    * @returns rows number or 0
    */
 	function getEstimatedSize() {
-		if (data.length > 0) {
+		if (data && data.length > 0) {
 			return data.length;
 		}
 
@@ -177,13 +130,7 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 			const itemId = configItem.id ? configItem.id : ColumnConfiguration.generateUId();
 			configItem.id = itemId;
 			return (
-				<Column
-					matrix={matrix}
-					key={`col:${itemId}`}
-					config={configItem}
-					index={index}
-					lastIndex={lastIndex}
-				/>
+				<Column key={`col:${itemId}`} config={configItem} index={index} lastIndex={lastIndex} />
 			);
 		},
 		[matrix]
@@ -227,8 +174,9 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 
 	return (
 		<View>
-			<EventHandleContext.Provider
+			<TableViewContext.Provider
 				value={{
+					matrix,
 					onCellPress,
 					onRowPress,
 					numericCellTextStyle,
@@ -244,7 +192,7 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 				}}
 			>
 				{tableView}
-			</EventHandleContext.Provider>
+			</TableViewContext.Provider>
 		</View>
 	);
 };

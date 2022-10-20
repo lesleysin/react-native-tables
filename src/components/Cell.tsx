@@ -3,22 +3,22 @@ import { GestureResponderEvent, Pressable, StyleSheet, Text, View, ViewStyle } f
 
 import broadcaster from "../utils/Broadcaster";
 import DateTimeFormatter from "../utils/DateTimeFormatter";
-import EventHandleContext from "./EventHandleContext";
+import TableViewContext from "./TableViewContext";
 import { TableStatic } from "../utils";
 
 import type ColumnOptions from "../types/CellOptions";
 import type { CellViewProps } from "../utils/TableStatic";
+import { TableValues } from "../types/TableData";
 
 interface ICellProps {
   config: ColumnOptions;
   parentIndex: number;
   ownIndex: number;
-  matrix: any[][];
   cellProps?: CellViewProps & ViewStyle;
 }
 
-const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps }) => {
-	const [cellValue, setCellValue] = useState<any>();
+const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, cellProps }) => {
+	const [cellValue, setCellValue] = useState<TableValues>(null);
 	const [pressed, setPressed] = useState(false);
 	const {
 		onCellPress,
@@ -27,7 +27,8 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 		stringCellTextStyle,
 		linkCellTextStyle,
 		dateCellTextStyle,
-	} = useContext(EventHandleContext);
+		matrix,
+	} = useContext(TableViewContext);
 
 	const onRowPressInListener = useCallback((val: boolean) => {
 		setPressed(val);
@@ -60,18 +61,19 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 		setPressed(false);
 	}, []);
 
-	function updateCell() {
+	useEffect(() => {
 		const val = matrix[parentIndex][ownIndex];
-		setCellValue(val);
-	}
+
+		if (val !== cellValue) {
+			setCellValue(val);
+		}
+	}, [matrix]);
 
 	useEffect(() => {
-		broadcaster.addListener(`cell:update:force${parentIndex}${ownIndex}`, updateCell);
 		broadcaster.addListener(`row:pressIn:${ownIndex}`, onRowPressInListener);
 		broadcaster.addListener(`row:pressOut:${ownIndex}`, onRowPressOutListener);
 
 		return () => {
-			broadcaster.removeListener(`cell:update:force${parentIndex}${ownIndex}`, updateCell);
 			broadcaster.removeListener(`row:pressIn:${ownIndex}`, onRowPressInListener);
 			broadcaster.removeListener(`row:pressOut:${ownIndex}`, onRowPressOutListener);
 		};
@@ -96,7 +98,7 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 					style={[styles.def, { ...stringCellTextStyle, ...TableStatic.stringCellTextStyle }]}
 					numberOfLines={1}
 				>
-					{cellValue}
+					{cellValue as string}
 				</Text>
 			);
 		}
@@ -106,12 +108,16 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 					style={[styles.def, { ...numericCellTextStyle, ...TableStatic.numericCellTextStyle }]}
 					numberOfLines={1}
 				>
-					{cellValue}
+					{cellValue as number}
 				</Text>
 			);
 		}
 		case "date": {
-			const parsedDate = DateTimeFormatter.formatDate(cellValue, config.format, config.locale);
+			const parsedDate = DateTimeFormatter.formatDate(
+          cellValue as Date,
+          config.format,
+          config.locale
+			);
 			return (
 				<Text
 					style={[styles.def, { ...dateCellTextStyle, ...TableStatic.dateCellTextStyle }]}
@@ -127,7 +133,7 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 					numberOfLines={1}
 					style={[styles.def, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}
 				>
-					{cellValue}
+					{cellValue as string}
 				</Text>
 			);
 		}

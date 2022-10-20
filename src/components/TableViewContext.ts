@@ -4,11 +4,12 @@ import type { GestureResponderEvent } from "react-native";
 import type { ITableStaticProps } from "../utils/TableStatic";
 
 
-interface IEventHandleContext extends ITableStaticProps {
+interface ITableViewContext extends ITableStaticProps {
+  matrix: any[][];
   onCellPress?: (event: GestureResponderEvent, cellValue: any) => void;
   onRowPress?: (event: GestureResponderEvent, rowValues: any[]) => void;
 }
 
-const EventHandleContext = React.createContext<IEventHandleContext>({});
+const TableViewContext = React.createContext<ITableViewContext>({matrix: []});
 
-export default EventHandleContext;
+export default TableViewContext;

@@ -2,7 +2,7 @@ import React, { FC, useContext, useMemo } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 import TableStatic from "../utils/TableStatic";
-import EventHandleContext from "./EventHandleContext";
+import TableViewContext from "./TableViewContext";
 
 import type ColumnOptions from "../types/CellOptions";
 
@@ -10,11 +10,10 @@ export interface IHeaderCellProps {
   config: ColumnOptions;
   index: number;
   lastIndex: number;
-  matrix: any[][];
 }
 
 const HeaderCell: FC<IHeaderCellProps> = ({ config, index, lastIndex }) => {
-	const { headerCellContainerStyle, headerCellTextStyle } = useContext(EventHandleContext);
+	const { headerCellContainerStyle, headerCellTextStyle } = useContext(TableViewContext);
 
 	/**
    * Function for get style by heder position in array

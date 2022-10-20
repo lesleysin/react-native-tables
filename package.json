@@ -6,7 +6,8 @@
   "scripts": {
     "prepare": "bob build",
     "lint": "eslint --ext .tsx --ext .ts src/",
-    "test": "jest --verbose --coverage"
+    "test": "jest",
+    "coverage": "jest --verbose --coverage"
   },
   "repository": {
     "type": "git",

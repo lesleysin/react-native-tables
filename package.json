@@ -9,7 +9,7 @@
     "test": "jest --verbose --coverage"
   },
   "repository": {
-    "type": "GIT",
+    "type": "git",
     "url": "https://github.com/lesleysin/react-native-tables.git"
   },
   "author": "lesleysin",

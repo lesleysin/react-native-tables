@@ -1,4 +1,14 @@
-import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, {
+	FC,
+	forwardRef,
+	ForwardRefRenderFunction,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useLayoutEffect,
+	useMemo,
+	useState,
+} from "react";
 import { ScrollView, View } from "react-native";
 
 import { ColumnConfiguration } from "../../types/CellOptions";
@@ -12,25 +22,36 @@ import type ColumnOptions from "../../types/CellOptions";
 import type { CompareEntryPoint } from "../../types/CompareEntry";
 import type ITableProps from "../../types/ITableProps";
 
-const Table: FC<ITableProps> = ({
-	config,
-	data,
-	estimatedRowCount,
-	onCellPress,
-	onRowPress,
-	numericCellTextStyle,
-	stringCellTextStyle,
-	linkCellTextStyle,
-	dateCellTextStyle,
-	headerCellTextStyle,
-	cellContainerStyle,
-	headerCellContainerStyle,
-	columnContainerStyle,
-	horizontalScrollViewProps,
-	verticalScrollViewProps,
-	enableHorizontalScroll = false,
-}) => {
+export interface TableRef {
+  clearTable: () => void;
+}
+
+const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
+	{
+		config,
+		data,
+		estimatedRowCount,
+		onCellPress,
+		onRowPress,
+		numericCellTextStyle,
+		stringCellTextStyle,
+		linkCellTextStyle,
+		dateCellTextStyle,
+		headerCellTextStyle,
+		cellContainerStyle,
+		headerCellContainerStyle,
+		columnContainerStyle,
+		horizontalScrollViewProps,
+		verticalScrollViewProps,
+		enableHorizontalScroll = false,
+	},
+	ref
+) => {
 	const [matrix, setMatrix] = useState<any[][]>([]);
+
+	useImperativeHandle(ref, () => ({
+		clearTable,
+	}));
 
 	useLayoutEffect(() => {
 		const size = getEstimatedSize();
@@ -47,6 +68,23 @@ const Table: FC<ITableProps> = ({
 			});
 		}
 	}, [data]);
+
+	function clearTable() {
+		const editableData = [...matrix];
+		for (let xIndex = 0; xIndex < editableData.length; xIndex++) {
+			const yElement = data[xIndex];
+
+			if (yElement === null || yElement === undefined) continue;
+
+			for (let yIndex = 0; yIndex < yElement.length; yIndex++) {
+				editableData[xIndex][yIndex] = null;
+			}
+		}
+		const compareRes = compareMatrix(matrix, editableData);
+		compareRes.forEach(({ xIndex, yIndex }) => {
+			broadcaster.emit(`cell:update:force${xIndex}${yIndex}`);
+		});
+	}
 
 	/**
    *
@@ -211,4 +249,4 @@ const Table: FC<ITableProps> = ({
 	);
 };
 
-export default Table;
+export default forwardRef(Table);

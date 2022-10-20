@@ -4,10 +4,10 @@ import { GestureResponderEvent, Pressable, StyleSheet, Text, View, ViewStyle } f
 import broadcaster from "../utils/Broadcaster";
 import DateTimeFormatter from "../utils/DateTimeFormatter";
 import EventHandleContext from "./EventHandleContext";
+import { TableStatic } from "../utils";
 
 import type ColumnOptions from "../types/CellOptions";
-import { TableStatic } from "../utils";
-import { CellViewProps } from "../utils/TableStatic";
+import type { CellViewProps } from "../utils/TableStatic";
 
 interface ICellProps {
   config: ColumnOptions;
@@ -38,6 +38,9 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 	}, []);
 
 	const onLongPressInHandler = useCallback((event: GestureResponderEvent) => {
+		broadcaster.emit(`row:pressIn:${ownIndex}`, true);
+		setPressed(true);
+
 		onCellPress?.(event, matrix[parentIndex][ownIndex]);
 
 		if (onRowPress) {
@@ -50,9 +53,6 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 			}
 			onRowPress(event, vals);
 		}
-
-		broadcaster.emit(`row:pressIn:${ownIndex}`, true);
-		setPressed(true);
 	}, []);
 
 	const onRowPressOutHandler = useCallback(() => {
@@ -76,6 +76,15 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 			broadcaster.removeListener(`row:pressOut:${ownIndex}`, onRowPressOutListener);
 		};
 	}, []);
+
+	const cellBorderStyle = useMemo(() => {
+		const dataLenght = matrix.length - 1;
+		if (parentIndex === 0 || dataLenght === parentIndex) {
+			return styles.flCellBorder;
+		}
+
+		return styles.defCellBorder;
+	}, [parentIndex]);
 
 	const preparedValue = useMemo(() => {
 		if (cellValue === null || cellValue === undefined) return <View />;
@@ -102,11 +111,7 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 			);
 		}
 		case "date": {
-			const parsedDate = DateTimeFormatter.formatDate(
-				cellValue,
-				TableStatic.format ?? config.format,
-				TableStatic.locale ?? config.locale
-			);
+			const parsedDate = DateTimeFormatter.formatDate(cellValue, config.format, config.locale);
 			return (
 				<Text
 					style={[styles.def, { ...dateCellTextStyle, ...TableStatic.dateCellTextStyle }]}
@@ -118,7 +123,10 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 		}
 		case "link": {
 			return (
-				<Text style={[styles.def, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}>
+				<Text
+					numberOfLines={1}
+					style={[styles.def, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}
+				>
 					{cellValue}
 				</Text>
 			);
@@ -140,10 +148,10 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, matrix, cellProps
 
 	return (
 		<Pressable
-			style={[styles.cell, { backgroundColor: pressedColor }]}
+			style={[styles.cell, cellBorderStyle, { backgroundColor: pressedColor }]}
 			onLongPress={onLongPressInHandler}
-			delayLongPress={TableStatic.cellContainerStyle.longPressDelay ?? 100}
 			onPressOut={onRowPressOutHandler}
+			delayLongPress={TableStatic.cellContainerStyle.longPressDelay ?? 100}
 		>
 			{preparedValue}
 		</Pressable>
@@ -155,14 +163,24 @@ const styles = StyleSheet.create({
 		flex: 1,
 		minHeight: 40,
 		width: "auto",
-		borderWidth: 0.3,
-		borderColor: "black",
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 8,
-		backgroundColor: "blue",
 	},
-	def: {},
+	flCellBorder: {
+		borderLeftWidth: 0.5,
+		borderBottomWidth: 0.5,
+		borderRightWidth: 0.5,
+	},
+	defCellBorder: {
+		borderBottomWidth: 0.5,
+		borderRightWidth: 0.5,
+	},
+	def: {
+		fontSize: 14,
+		fontWeight: "400",
+		lineHeight: 16,
+	},
 });
 
 export default Cell;

@@ -1,6 +1,6 @@
 {
   "name": "@lesleysin/react-native-tables",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple and fast table component for React Native with extensive configuration options",
   "main": "dist/commonjs/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "keywords": [
     "react-native",
-    "ios", 
+    "ios",
     "android",
     "table",
     "dataset"

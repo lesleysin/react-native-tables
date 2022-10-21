@@ -7,6 +7,7 @@ import HeaderCell from "./HeaderCell";
 import type ColumnOptions from "../types/CellOptions";
 import TableViewContext from "./TableViewContext";
 import { TableStatic } from "../utils";
+import { colorPalette } from "../constants/colorPallete";
 
 interface IColumnProps {
   index: number;
@@ -100,6 +101,7 @@ const Column: FC<IColumnProps> = ({ index, lastIndex, config }) => {
 const styles = StyleSheet.create({
 	fl: {
 		flex: 1,
+		backgroundColor: colorPalette.background,
 	},
 });
 

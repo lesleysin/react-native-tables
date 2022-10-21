@@ -5,6 +5,8 @@ import TableStatic from "../utils/TableStatic";
 import TableViewContext from "./TableViewContext";
 
 import type ColumnOptions from "../types/CellOptions";
+import { colorPalette } from "../constants/colorPallete";
+import { borderRadius, borderWidth } from "../constants/border";
 
 export interface IHeaderCellProps {
   config: ColumnOptions;
@@ -70,27 +72,28 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	cellFirst: {
-		borderTopLeftRadius: 8,
-		borderRightWidth: 1,
-		borderRightColor: "#DCDCDC",
+		borderTopLeftRadius: borderRadius,
+		borderRightWidth: borderWidth,
+		borderColor: colorPalette.borderAccent,
 	},
 	cellLast: {
-		borderTopRightRadius: 8,
-		borderTopWidth: 1,
+		borderTopRightRadius: borderRadius,
+		borderLeftWidth: borderWidth,
+		borderColor: colorPalette.borderAccent,
 	},
 	default: {
 		flex: 1,
 		width: "auto",
 		minHeight: 40,
-		backgroundColor: "blue",
-		borderRightWidth: 1,
-		borderRightColor: "#DCDCDC",
+		backgroundColor: colorPalette.primary,
+		borderRightWidth: borderWidth,
+		borderRightColor: colorPalette.borderAccent,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 8,
 	},
 	text: {
-		color: "white",
+		color: colorPalette.textHeading,
 		fontSize: 16,
 		lineHeight: 18,
 		fontWeight: "400",

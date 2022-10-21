@@ -1,5 +1,5 @@
 {
-  "name": "react-native-tables",
+  "name": "@lesleysin/react-native-tables",
   "version": "1.0.0",
   "description": "Simple and fast table component for React Native with extensive configuration options",
   "main": "dist/commonjs/index.js",
@@ -14,7 +14,7 @@
     "url": "https://github.com/lesleysin/react-native-tables.git"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.npmjs.com/"
   },
   "keywords": [
     "react-native",

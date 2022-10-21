@@ -1,0 +1,31 @@
+name: API workflow
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14, 16, 18]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn
+      - name: Run coverage tests
+        run: yarn coverage
+      - name: Upload coverage reports to Codecov
+        run: |
+        # Replace `linux` below with the appropriate OS
+        # Options are `alpine`, `linux`, `macos`, `windows`
+        curl -Os https://uploader.codecov.io/latest/macos/codecov
+        chmod +x codecov

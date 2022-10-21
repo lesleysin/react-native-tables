@@ -4,6 +4,9 @@ Simple and fast table component for React Native with extensive configuration op
 
 ## Motivation
 
+This library was created to facilitate the work of colleagues who are faced with such a non-trivial task as creating tables for a mobile application. You can use this package or build on this source code to create your own solutions.
+
+
 ## Get started
 
 ```

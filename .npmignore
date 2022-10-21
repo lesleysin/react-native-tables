@@ -12,8 +12,12 @@ package-lock.json
 # jest
 coverage
 
+# ignore src
+src/**/*
+
+
 # dev
-src
+src/
 test
 types
 build

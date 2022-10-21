@@ -5,10 +5,12 @@ import broadcaster from "../utils/Broadcaster";
 import DateTimeFormatter from "../utils/DateTimeFormatter";
 import TableViewContext from "./TableViewContext";
 import { TableStatic } from "../utils";
+import { colorPalette } from "../constants/colorPallete";
 
 import type ColumnOptions from "../types/CellOptions";
 import type { CellViewProps } from "../utils/TableStatic";
 import { TableValues } from "../types/TableData";
+import { borderWidth } from "../constants/border";
 
 interface ICellProps {
   config: ColumnOptions;
@@ -131,7 +133,7 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, cellProps }) => {
 			return (
 				<Text
 					numberOfLines={1}
-					style={[styles.def, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}
+					style={[styles.link, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}
 				>
 					{cellValue as string}
 				</Text>
@@ -172,20 +174,29 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 8,
+		backgroundColor: colorPalette.primary,
 	},
 	flCellBorder: {
-		borderLeftWidth: 0.5,
-		borderBottomWidth: 0.5,
-		borderRightWidth: 0.5,
+		borderLeftWidth: borderWidth,
+		borderBottomWidth: borderWidth,
+		borderRightWidth: borderWidth,
+		borderColor: colorPalette.border,
 	},
 	defCellBorder: {
-		borderBottomWidth: 0.5,
-		borderRightWidth: 0.5,
+		borderBottomWidth: borderWidth,
+		borderRightWidth: borderWidth,
+		borderColor: colorPalette.border,
 	},
 	def: {
 		fontSize: 14,
 		fontWeight: "400",
 		lineHeight: 16,
+	},
+	link: {
+		fontSize: 14,
+		fontWeight: "400",
+		lineHeight: 16,
+		color: colorPalette.primary,
 	},
 });
 

@@ -47,4 +47,4 @@ const App = () => {
 
 ## Documentation
 
-Learn more about advanced usage and type definitions here https://github.com/lesleysin/react-native-tables/doc
+Learn more about advanced usage and type definitions here https://github.com/lesleysin/react-native-tables/tree/main/doc

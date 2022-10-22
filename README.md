@@ -1,11 +1,12 @@
 # react-native-tables
 
+[![npm version](https://badge.fury.io/js/@lesleysin%2Freact-native-tables.svg)](https://badge.fury.io/js/@lesleysin%2Freact-native-tables) [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+
 Simple and fast table component for React Native with extensive configuration options
 
 ## Motivation
 
 This library was created to facilitate the work of colleagues who are faced with such a non-trivial task as creating tables for a mobile application. You can use this package or build on this source code to create your own solutions.
-
 
 ## Get started
 

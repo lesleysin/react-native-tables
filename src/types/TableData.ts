@@ -2,7 +2,7 @@
 
 import type { Nullable } from "./Nullable";
 
-type PrimitiveValue = string | number | Date | symbol;
+type PrimitiveValue = string | number | Date;
 
 export class ComplexValue {
 	value: Object;

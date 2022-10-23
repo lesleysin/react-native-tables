@@ -91,7 +91,7 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, cellProps }) => {
 	}, [parentIndex]);
 
 	const preparedValue = useMemo(() => {
-		if (cellValue === null || cellValue === undefined) return <View />;
+		if (!cellValue) return <View />;
 
 		switch (config.type) {
 		case "string": {

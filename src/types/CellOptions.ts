@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { AvailableLocales, DateTimeFormat } from "./DateTimeFormat";
 
 
@@ -7,11 +8,13 @@ export class ColumnConfiguration {
 	title: string;
 	id?: string;
 	isSortable?: boolean;
+	sortIcon?: ReactNode;
 
-	constructor(title: string, id?: string, isSortable = false) {
+	constructor(title: string, id?: string, sortIcon?: ReactNode, isSortable = false) {
 		this.title = title;
 		this.id = id ?? ColumnConfiguration.generateUId();
 		this.isSortable = isSortable;
+		this.sortIcon = sortIcon;
 	}
 
 	public static generateUId(len = 10) {

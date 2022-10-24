@@ -1,12 +1,13 @@
-import React, { FC, useContext, useMemo } from "react";
+import React, { FC, useCallback, useContext, useMemo, useRef } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 import TableStatic from "../utils/TableStatic";
 import TableViewContext from "./TableViewContext";
-
-import type ColumnOptions from "../types/CellOptions";
 import { colorPalette } from "../constants/colorPallete";
 import { borderRadius, borderWidth } from "../constants/border";
+
+import type ColumnOptions from "../types/CellOptions";
+import type { SortDirection } from "../types/Sorting";
 
 export interface IHeaderCellProps {
   config: ColumnOptions;
@@ -15,7 +16,10 @@ export interface IHeaderCellProps {
 }
 
 const HeaderCell: FC<IHeaderCellProps> = ({ config, index, lastIndex }) => {
-	const { headerCellContainerStyle, headerCellTextStyle } = useContext(TableViewContext);
+	const { headerCellContainerStyle, headerCellTextStyle, onSortEmited } =
+    useContext(TableViewContext);
+	const { isSortable, sortIcon } = config;
+	const sortDir = useRef<SortDirection>("ASC");
 
 	/**
    * Function for get style by heder position in array
@@ -47,18 +51,26 @@ const HeaderCell: FC<IHeaderCellProps> = ({ config, index, lastIndex }) => {
 		};
 	}
 
+	const onCellPressed = useCallback(() => {
+		if (isSortable) {
+			onSortEmited?.(index, sortDir.current);
+			sortDir.current = sortDir.current === "ASC" ? "DSC" : "ASC";
+		}
+	}, []);
+
 	/**
    * Memoised header cell view
    */
 	const headerView = useMemo(() => {
 		return (
 			<View>
-				<Pressable style={getCellStyle()}>
+				<Pressable onPress={onCellPressed} style={getCellStyle()}>
 					<Text
 						style={[styles.text, { ...headerCellTextStyle, ...TableStatic.headerCellTextStyle }]}
 					>
 						{config.title}
 					</Text>
+					{isSortable && sortIcon}
 				</Pressable>
 			</View>
 		);
@@ -88,9 +100,10 @@ const styles = StyleSheet.create({
 		backgroundColor: colorPalette.primary,
 		borderRightWidth: borderWidth,
 		borderRightColor: colorPalette.borderAccent,
-		justifyContent: "center",
+		justifyContent: "space-evenly",
 		alignItems: "center",
 		padding: 8,
+		flexDirection: "row",
 	},
 	text: {
 		color: colorPalette.textHeading,

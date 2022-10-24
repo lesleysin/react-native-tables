@@ -6,11 +6,11 @@ import DateTimeFormatter from "../utils/DateTimeFormatter";
 import TableViewContext from "./TableViewContext";
 import { TableStatic } from "../utils";
 import { colorPalette } from "../constants/colorPallete";
+import { ComplexValue, TableValues } from "../types/TableData";
+import { borderWidth } from "../constants/border";
 
 import type ColumnOptions from "../types/CellOptions";
 import type { CellViewProps } from "../utils/TableStatic";
-import { TableValues } from "../types/TableData";
-import { borderWidth } from "../constants/border";
 
 interface ICellProps {
   config: ColumnOptions;
@@ -65,9 +65,16 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, cellProps }) => {
 
 	useEffect(() => {
 		const val = matrix[parentIndex][ownIndex];
+		let current;
+		if (val instanceof ComplexValue) {
+			const { value: object, viewablePropName } = val;
+			current = object[viewablePropName as keyof typeof object];
+		} else {
+			current = val;
+		}
 
-		if (val !== cellValue) {
-			setCellValue(val);
+		if (current !== cellValue) {
+			setCellValue(current);
 		}
 	}, [matrix]);
 

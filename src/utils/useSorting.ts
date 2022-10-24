@@ -6,45 +6,63 @@ import { ComplexValue, TableValues } from "../types/TableData";
 function useSorting() {
 
 	function customASCSorter(elem1: SortingSignature, elem2: SortingSignature) {
+		let value1;
+		let value2;
+
 		if (elem1.target instanceof ComplexValue) {
-			return -1;
+			const {value: object, viewablePropName} = elem1.target;
+			value1 = object[viewablePropName as keyof typeof object];
 		}
 
-		if (!elem1.target && !elem2.target) {
+		if (elem2.target instanceof ComplexValue) {
+			const {value: object, viewablePropName} = elem2.target;
+			value2 = object[viewablePropName as keyof typeof object];
+		}
+
+		if (!value1 && !value2) {
 			return 0;
 		}
 
-		if (!elem1.target) {
+		if (!value1) {
 			return -1;
 		}
 
-		if (!elem2.target) {
+		if (!value2) {
 			return 1;
 		}
 
 
-		return elem1.target > elem2.target ? 1 : -1;
+		return value1 > value2 ? 1 : -1;
 	}
 
 	function customDSCSorter(elem1: SortingSignature, elem2: SortingSignature) {
+		let value1;
+		let value2;
+		
 		if (elem1.target instanceof ComplexValue) {
+			const {value: object, viewablePropName} = elem1.target;
+			value1 = object[viewablePropName as keyof typeof object];
+		}
+
+		if (elem2.target instanceof ComplexValue) {
+			const {value: object, viewablePropName} = elem2.target;
+			value2 = object[viewablePropName as keyof typeof object];
+		}
+
+		if (!value1 && !value2) {
 			return -1;
 		}
 
-		if (!elem1.target && !elem2.target) {
-			return -1;
-		}
-
-		if (!elem1.target) {
+		if (!value1) {
 			return 1;
 		}
 
-		if (!elem2.target) {
+		if (!value2) {
 			return -1;
 		}
 
 
-		return elem1 < elem2 ? 1 : -1;
+		return value1 < value2 ? 1 : -1;
 	}
 
 	/**

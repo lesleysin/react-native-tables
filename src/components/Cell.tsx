@@ -5,10 +5,12 @@ import broadcaster from "../utils/Broadcaster";
 import DateTimeFormatter from "../utils/DateTimeFormatter";
 import TableViewContext from "./TableViewContext";
 import { TableStatic } from "../utils";
+import { colorPalette } from "../constants/colorPallete";
+import { ComplexValue, TableValues } from "../types/TableData";
+import { borderWidth } from "../constants/border";
 
 import type ColumnOptions from "../types/CellOptions";
 import type { CellViewProps } from "../utils/TableStatic";
-import { TableValues } from "../types/TableData";
 
 interface ICellProps {
   config: ColumnOptions;
@@ -63,9 +65,16 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, cellProps }) => {
 
 	useEffect(() => {
 		const val = matrix[parentIndex][ownIndex];
+		let current;
+		if (val instanceof ComplexValue) {
+			const { value: object, viewablePropName } = val;
+			current = object[viewablePropName as keyof typeof object];
+		} else {
+			current = val;
+		}
 
-		if (val !== cellValue) {
-			setCellValue(val);
+		if (current !== cellValue) {
+			setCellValue(current);
 		}
 	}, [matrix]);
 
@@ -89,7 +98,7 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, cellProps }) => {
 	}, [parentIndex]);
 
 	const preparedValue = useMemo(() => {
-		if (cellValue === null || cellValue === undefined) return <View />;
+		if (!cellValue) return <View />;
 
 		switch (config.type) {
 		case "string": {
@@ -131,7 +140,7 @@ const Cell: FC<ICellProps> = ({ config, parentIndex, ownIndex, cellProps }) => {
 			return (
 				<Text
 					numberOfLines={1}
-					style={[styles.def, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}
+					style={[styles.link, { ...linkCellTextStyle, ...TableStatic.linkCellTextStyle }]}
 				>
 					{cellValue as string}
 				</Text>
@@ -172,20 +181,29 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 8,
+		backgroundColor: colorPalette.primary,
 	},
 	flCellBorder: {
-		borderLeftWidth: 0.5,
-		borderBottomWidth: 0.5,
-		borderRightWidth: 0.5,
+		borderLeftWidth: borderWidth,
+		borderBottomWidth: borderWidth,
+		borderRightWidth: borderWidth,
+		borderColor: colorPalette.border,
 	},
 	defCellBorder: {
-		borderBottomWidth: 0.5,
-		borderRightWidth: 0.5,
+		borderBottomWidth: borderWidth,
+		borderRightWidth: borderWidth,
+		borderColor: colorPalette.border,
 	},
 	def: {
 		fontSize: 14,
 		fontWeight: "400",
 		lineHeight: 16,
+	},
+	link: {
+		fontSize: 14,
+		fontWeight: "400",
+		lineHeight: 16,
+		color: colorPalette.primary,
 	},
 });
 

@@ -28,7 +28,7 @@ example
 
 #doc
 CONTRIBUTING.md
-docs
+doc
 
 #other
 .travis.yml

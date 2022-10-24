@@ -1,6 +1,7 @@
 import type { GestureResponderEvent } from "react-native";
 import type { ITableStaticProps } from "../utils/TableStatic";
 import type ColumnOptions from "./CellOptions";
+import type { SortDirection } from "./Sorting";
 import type { TableData } from "./TableData";
 
  interface ITableProps extends ITableStaticProps {
@@ -14,6 +15,7 @@ import type { TableData } from "./TableData";
 
 export interface TableRef {
     clearTable: () => void;
+    sort: (index: number, direction: SortDirection) => void;
 }
 
 export default ITableProps;

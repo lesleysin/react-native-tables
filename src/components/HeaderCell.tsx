@@ -1,10 +1,13 @@
-import React, { FC, useContext, useMemo } from "react";
+import React, { FC, useCallback, useContext, useMemo, useRef } from "react";
 import { Pressable, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 import TableStatic from "../utils/TableStatic";
 import TableViewContext from "./TableViewContext";
+import { colorPalette } from "../constants/colorPallete";
+import { borderRadius, borderWidth } from "../constants/border";
 
 import type ColumnOptions from "../types/CellOptions";
+import type { SortDirection } from "../types/Sorting";
 
 export interface IHeaderCellProps {
   config: ColumnOptions;
@@ -13,7 +16,10 @@ export interface IHeaderCellProps {
 }
 
 const HeaderCell: FC<IHeaderCellProps> = ({ config, index, lastIndex }) => {
-	const { headerCellContainerStyle, headerCellTextStyle } = useContext(TableViewContext);
+	const { headerCellContainerStyle, headerCellTextStyle, onSortEmited } =
+    useContext(TableViewContext);
+	const { isSortable, sortIcon } = config;
+	const sortDir = useRef<SortDirection>("ASC");
 
 	/**
    * Function for get style by heder position in array
@@ -45,18 +51,26 @@ const HeaderCell: FC<IHeaderCellProps> = ({ config, index, lastIndex }) => {
 		};
 	}
 
+	const onCellPressed = useCallback(() => {
+		if (isSortable) {
+			onSortEmited?.(index, sortDir.current);
+			sortDir.current = sortDir.current === "ASC" ? "DSC" : "ASC";
+		}
+	}, []);
+
 	/**
    * Memoised header cell view
    */
 	const headerView = useMemo(() => {
 		return (
 			<View>
-				<Pressable style={getCellStyle()}>
+				<Pressable onPress={onCellPressed} style={getCellStyle()}>
 					<Text
 						style={[styles.text, { ...headerCellTextStyle, ...TableStatic.headerCellTextStyle }]}
 					>
 						{config.title}
 					</Text>
+					{isSortable && sortIcon}
 				</Pressable>
 			</View>
 		);
@@ -70,27 +84,29 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	cellFirst: {
-		borderTopLeftRadius: 8,
-		borderRightWidth: 1,
-		borderRightColor: "#DCDCDC",
+		borderTopLeftRadius: borderRadius,
+		borderRightWidth: borderWidth,
+		borderColor: colorPalette.borderAccent,
 	},
 	cellLast: {
-		borderTopRightRadius: 8,
-		borderTopWidth: 1,
+		borderTopRightRadius: borderRadius,
+		borderLeftWidth: borderWidth,
+		borderColor: colorPalette.borderAccent,
 	},
 	default: {
 		flex: 1,
 		width: "auto",
 		minHeight: 40,
-		backgroundColor: "blue",
-		borderRightWidth: 1,
-		borderRightColor: "#DCDCDC",
-		justifyContent: "center",
+		backgroundColor: colorPalette.primary,
+		borderRightWidth: borderWidth,
+		borderRightColor: colorPalette.borderAccent,
+		justifyContent: "space-evenly",
 		alignItems: "center",
 		padding: 8,
+		flexDirection: "row",
 	},
 	text: {
-		color: "white",
+		color: colorPalette.textHeading,
 		fontSize: 16,
 		lineHeight: 18,
 		fontWeight: "400",

@@ -13,11 +13,13 @@ import { ColumnConfiguration } from "../../types/CellOptions";
 import Column from "../Column";
 import TableViewContext from "../TableViewContext";
 import { TableStatic } from "../../utils";
+import useSorting from "../../utils/useSorting";
 
 import type { TableData } from "../../types/TableData";
 import type ColumnOptions from "../../types/CellOptions";
 import type ITableProps from "../../types/ITableProps";
 import type { TableRef } from "../../types/ITableProps";
+import type { SortDirection } from "../../types/Sorting";
 
 const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 	{
@@ -41,17 +43,7 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 	ref
 ) => {
 	const [matrix, setMatrix] = useState<any[][]>([]);
-
-	useImperativeHandle(ref, () => ({
-		clearTable,
-	}));
-
-	useEffect(() => {
-		const size = getEstimatedSize();
-		const newMatrix = createMatrix(config.length, size);
-		const updatedMatrix = updateMatrix(newMatrix, data);
-		setMatrix(updatedMatrix);
-	}, [data]);
+	const { sortBy } = useSorting();
 
 	function clearTable() {
 		const newMatrix = [...matrix];
@@ -65,6 +57,14 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 			}
 		}
 		setMatrix(newMatrix);
+	}
+
+	function onSortEmited(index: number, direction: SortDirection) {
+		const sortedData = sortBy([...data], index, direction);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore
+		//FIXME - fix types (any[][] and TableData)
+		setMatrix(sortedData);
 	}
 
 	/**
@@ -120,6 +120,22 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 
 		return 0;
 	}
+
+	useImperativeHandle(
+		ref,
+		() => ({
+			clearTable,
+			sort: onSortEmited,
+		}),
+		[]
+	);
+
+	useEffect(() => {
+		const size = getEstimatedSize();
+		const newMatrix = createMatrix(config.length, size);
+		const updatedMatrix = updateMatrix(newMatrix, data);
+		setMatrix(updatedMatrix);
+	}, [data]);
 
 	/**
    * Render function for create columnt view
@@ -179,6 +195,7 @@ const Table: ForwardRefRenderFunction<TableRef, ITableProps> = (
 					matrix,
 					onCellPress,
 					onRowPress,
+					onSortEmited,
 					numericCellTextStyle,
 					stringCellTextStyle,
 					linkCellTextStyle,
